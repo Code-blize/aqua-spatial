@@ -1,2 +1,1 @@
-# aqua-spatial
-A GIS-driven predictive engine for optimizing water infrastructure. It uses spatial interpolation (IDW) and terrain analytics to identify underserved "water deserts" and calculate cost-feasibility for new boreholes. Built with Python &amp; Streamlit.
+Aqua-Spatial Intelligence Platform is an end-to-end geospatial analytics dashboard designed to solve water scarcity through intelligent resource allocation in Enugu. By layering population density, topographical data, and existing groundwater logs, this platform leverages mathematical interpolation to predict water viability and estimate infrastructure costs, turning raw spatial data into actionable government strategy.
