@@ -70,17 +70,17 @@ st.markdown("""
 # ============================================================
 @st.cache_data
 def load_data():
-    return pd.read_csv('app/dashboard_data.csv')
+    return pd.read_csv('dashboard_data.csv')
 
 @st.cache_data
 def load_geodata():
-    with open('data/enugu_data.pkl', 'rb') as f:
+    with open('../data/enugu_data.pkl', 'rb') as f:
         data = pickle.load(f)
     return data['enugu']
 
 @st.cache_data
 def load_importance():
-    return pd.read_csv('app/feature_importance.csv')
+    return pd.read_csv('feature_importance.csv')
 
 df            = load_data()
 enugu         = load_geodata()
