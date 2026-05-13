@@ -181,21 +181,17 @@ st.markdown("""
 # ============================================================
 @st.cache_data
 def load_data():
-    base = os.path.dirname(os.path.abspath(__file__))
-    return pd.read_csv(os.path.join(base, 'dashboard_data.csv'))
+    return pd.read_csv('app/dashboard_data.csv')
 
 @st.cache_data
 def load_geodata():
-    base = os.path.dirname(os.path.abspath(__file__))
-    with open(os.path.join(base, '..', 'data', 'enugu_data.pkl'), 'rb') as f:
+    with open('data/enugu_data.pkl', 'rb') as f:
         data = pickle.load(f)
     return data['enugu']
 
 @st.cache_data
 def load_importance():
-    base = os.path.dirname(os.path.abspath(__file__))
-    return pd.read_csv(os.path.join(base, 'feature_importance.csv'))
-
+    return pd.read_csv('app/feature_importance.csv')
 # ============================================================
 # SIDEBAR
 # ============================================================
