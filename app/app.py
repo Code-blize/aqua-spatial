@@ -179,6 +179,9 @@ st.markdown("""
 # ============================================================
 # DATA LOADING
 # ============================================================
+# ============================================================
+# DATA LOADING
+# ============================================================
 @st.cache_data
 def load_data():
     return pd.read_csv('app/dashboard_data.csv')
@@ -192,6 +195,11 @@ def load_geodata():
 @st.cache_data
 def load_importance():
     return pd.read_csv('app/feature_importance.csv')
+
+# ← ADD THESE THREE LINES HERE
+df            = load_data()
+enugu         = load_geodata()
+importance_df = load_importance()
 # ============================================================
 # SIDEBAR
 # ============================================================
