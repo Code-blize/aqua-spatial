@@ -32,144 +32,33 @@ st.set_page_config(
 st.markdown("""
 <style>
     .stApp { background-color: #07111f; color: #e2f4fb; }
-
-    [data-testid="stSidebar"] {
-        background: #050d18;
-        border-right: 1px solid #0e2a45;
-    }
+    [data-testid="stSidebar"] { background: #050d18; border-right: 1px solid #0e2a45; }
     [data-testid="stSidebar"] * { color: #8ab8cc !important; }
     [data-testid="stSidebar"] .stMarkdown b { color: #e2f4fb !important; }
-
-    /* Sidebar multiselect tags */
-    [data-testid="stMultiSelect"] span[data-baseweb="tag"] {
-        background-color: #0e2a45 !important;
-        color: #e2f4fb !important;
-    }
-    [data-testid="stMultiSelect"] span[data-baseweb="tag"] span {
-        color: #e2f4fb !important;
-    }
-
-    /* Streamlit default text overrides */
+    [data-testid="stMultiSelect"] span[data-baseweb="tag"] { background-color: #0e2a45 !important; color: #e2f4fb !important; }
+    [data-testid="stMultiSelect"] span[data-baseweb="tag"] span { color: #e2f4fb !important; }
     .stMarkdown p { color: #8ab8cc; }
     label { color: #8ab8cc !important; }
-
-    /* KPI Cards */
-    .kpi-card {
-        background: #07111f;
-        border: 1px solid #0e2a45;
-        border-top: 2px solid #0ea5c9;
-        border-radius: 4px;
-        padding: 20px 24px;
-        height: 130px;
-    }
-    .kpi-value {
-        font-size: 1.8rem;
-        font-weight: 400;
-        color: #e2f4fb;
-        letter-spacing: -0.5px;
-        line-height: 1.2;
-    }
+    .kpi-card { background: #07111f; border: 1px solid #0e2a45; border-top: 2px solid #0ea5c9; border-radius: 4px; padding: 20px 24px; height: 130px; }
+    .kpi-value { font-size: 1.8rem; font-weight: 400; color: #e2f4fb; letter-spacing: -0.5px; line-height: 1.2; }
     .kpi-value.critical { color: #e05252; }
     .kpi-value.warn     { color: #e07d30; }
     .kpi-value.good     { color: #22c77a; }
     .kpi-value.info     { color: #0ea5c9; }
-    .kpi-label {
-        font-size: 0.65rem;
-        color: #3d7a9e;
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-    }
-    .kpi-sublabel {
-        font-size: 0.7rem;
-        color: #4a7a99;
-        margin-top: 4px;
-    }
-    .kpi-bar {
-        margin-top: 10px;
-        height: 2px;
-        background: #0e2a45;
-        border-radius: 1px;
-        overflow: hidden;
-    }
-    .kpi-bar-fill {
-        height: 100%;
-        border-radius: 1px;
-    }
-
-    /* Section headers */
-    .section-header {
-        font-size: 0.65rem;
-        color: #0ea5c9;
-        text-transform: uppercase;
-        letter-spacing: 3px;
-        margin-bottom: 16px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #0e2a45;
-    }
-
-    /* Hero */
-    .hero-tag {
-        font-size: 0.65rem;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        color: #0ea5c9;
-        margin-bottom: 10px;
-    }
-    .hero-title {
-        font-size: 2.2rem;
-        font-weight: 300;
-        color: #e2f4fb;
-        letter-spacing: -1px;
-        line-height: 1.15;
-        margin-bottom: 10px;
-    }
+    .kpi-label { font-size: 0.65rem; color: #3d7a9e; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 2px; }
+    .kpi-sublabel { font-size: 0.7rem; color: #4a7a99; margin-top: 4px; }
+    .kpi-bar { margin-top: 10px; height: 2px; background: #0e2a45; border-radius: 1px; overflow: hidden; }
+    .kpi-bar-fill { height: 100%; border-radius: 1px; }
+    .section-header { font-size: 0.65rem; color: #0ea5c9; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid #0e2a45; }
+    .hero-tag { font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; color: #0ea5c9; margin-bottom: 10px; }
+    .hero-title { font-size: 2.2rem; font-weight: 300; color: #e2f4fb; letter-spacing: -1px; line-height: 1.15; margin-bottom: 10px; }
     .hero-title span { color: #0ea5c9; font-weight: 500; }
-    .hero-sub {
-        font-size: 0.8rem;
-        color: #4a7a99;
-        letter-spacing: 0.5px;
-    }
-
-    /* Status pills */
-    .status-pill {
-        background: #051a0f;
-        border: 1px solid #0a6640;
-        color: #22c77a;
-        font-size: 0.68rem;
-        padding: 5px 14px;
-        border-radius: 3px;
-        letter-spacing: 1px;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 8px;
-        text-transform: uppercase;
-    }
-    .status-dot {
-        width: 6px;
-        height: 6px;
-        background: #22c77a;
-        border-radius: 50%;
-        display: inline-block;
-    }
-    .alert-pill {
-        background: #150d04;
-        border: 1px solid #7a3a08;
-        color: #e07d30;
-        font-size: 0.68rem;
-        padding: 5px 14px;
-        border-radius: 3px;
-        letter-spacing: 1px;
-        display: inline-block;
-        text-transform: uppercase;
-    }
-
-    /* Dataframe */
+    .hero-sub { font-size: 0.8rem; color: #4a7a99; letter-spacing: 0.5px; }
+    .status-pill { background: #051a0f; border: 1px solid #0a6640; color: #22c77a; font-size: 0.68rem; padding: 5px 14px; border-radius: 3px; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 8px; text-transform: uppercase; }
+    .status-dot { width: 6px; height: 6px; background: #22c77a; border-radius: 50%; display: inline-block; }
+    .alert-pill { background: #150d04; border: 1px solid #7a3a08; color: #e07d30; font-size: 0.68rem; padding: 5px 14px; border-radius: 3px; letter-spacing: 1px; display: inline-block; text-transform: uppercase; }
     [data-testid="stDataFrame"] { border: 1px solid #0e2a45 !important; }
     [data-testid="stDataFrame"] * { color: #e2f4fb !important; }
-
-    /* Hide Streamlit chrome */
     #MainMenu { visibility: hidden; }
     footer { visibility: hidden; }
     header { visibility: hidden; }
@@ -177,10 +66,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ============================================================
-# DATA LOADING
-# ============================================================
-# ============================================================
-# DATA LOADING
+# DATA LOADING — functions defined then called immediately
 # ============================================================
 @st.cache_data
 def load_data():
@@ -196,10 +82,10 @@ def load_geodata():
 def load_importance():
     return pd.read_csv('app/feature_importance.csv')
 
-# ← ADD THESE THREE LINES HERE
 df            = load_data()
 enugu         = load_geodata()
 importance_df = load_importance()
+
 # ============================================================
 # SIDEBAR
 # ============================================================
@@ -207,9 +93,7 @@ with st.sidebar:
     st.markdown("""
     <div style='text-align:center; padding:10px 0 24px 0; border-bottom:1px solid #0e2a45;'>
         <div style='color:#0ea5c9; font-weight:700; font-size:1rem; letter-spacing:3px'>AQUA-SPATIAL</div>
-        <div style='color:#3d7a9e; font-size:0.65rem; letter-spacing:2px; margin-top:6px'>
-            WATER INTELLIGENCE PLATFORM
-        </div>
+        <div style='color:#3d7a9e; font-size:0.65rem; letter-spacing:2px; margin-top:6px'>WATER INTELLIGENCE PLATFORM</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -233,8 +117,7 @@ with st.sidebar:
     st.markdown("**Map Layer**")
     map_layer = st.radio(
         "Layer",
-        options=['Predicted Stress', 'Functionality Rate',
-                 'Terrain Difficulty', 'Drilling Difficulty'],
+        options=['Predicted Stress', 'Functionality Rate', 'Terrain Difficulty', 'Drilling Difficulty'],
         label_visibility='collapsed'
     )
 
@@ -262,7 +145,7 @@ with st.sidebar:
 # ============================================================
 # FILTER DATA
 # ============================================================
-filtered_df  = df[df['confidence'].isin(confidence_filter)].copy()
+filtered_df   = df[df['confidence'].isin(confidence_filter)].copy()
 priority_lgas = df[df['predicted_stress'] >= threshold]
 
 # ============================================================
@@ -281,12 +164,8 @@ with col_badge:
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown(f"""
     <div style='text-align:right'>
-        <div class='status-pill'>
-            <span class='status-dot'></span>GEE Satellite Active
-        </div><br>
-        <div class='alert-pill'>
-            {len(priority_lgas)} LGAs Require Intervention
-        </div>
+        <div class='status-pill'><span class='status-dot'></span>GEE Satellite Active</div><br>
+        <div class='alert-pill'>{len(priority_lgas)} LGAs Require Intervention</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -299,11 +178,11 @@ st.markdown("<div class='section-header'>State Overview</div>", unsafe_allow_htm
 
 k1, k2, k3, k4, k5 = st.columns(5)
 
-most_stressed    = df.loc[df['predicted_stress'].idxmax()]
-avg_stress       = df['predicted_stress'].mean()
+most_stressed     = df.loc[df['predicted_stress'].idxmax()]
+avg_stress        = df['predicted_stress'].mean()
 avg_functionality = df['functionality_rate'].mean()
-total_pop        = df['total_pop_served'].sum()
-high_conf        = len(df[df['confidence'] == 'High'])
+total_pop         = df['total_pop_served'].sum()
+high_conf         = len(df[df['confidence'] == 'High'])
 
 with k1:
     st.markdown(f"""
@@ -311,9 +190,7 @@ with k1:
         <div class='kpi-label'>Most Critical LGA</div>
         <div class='kpi-value critical'>{most_stressed['lga_name']}</div>
         <div class='kpi-sublabel'>Score {most_stressed['predicted_stress']:.3f}</div>
-        <div class='kpi-bar'>
-            <div class='kpi-bar-fill' style='width:{most_stressed["predicted_stress"]*100:.0f}%; background:#e05252'></div>
-        </div>
+        <div class='kpi-bar'><div class='kpi-bar-fill' style='width:{most_stressed["predicted_stress"]*100:.0f}%; background:#e05252'></div></div>
     </div>""", unsafe_allow_html=True)
 
 with k2:
@@ -322,9 +199,7 @@ with k2:
         <div class='kpi-label'>Avg State Stress</div>
         <div class='kpi-value warn'>{avg_stress:.2f}</div>
         <div class='kpi-sublabel'>0 = No stress &nbsp;|&nbsp; 1 = Critical</div>
-        <div class='kpi-bar'>
-            <div class='kpi-bar-fill' style='width:{avg_stress*100:.0f}%; background:#e07d30'></div>
-        </div>
+        <div class='kpi-bar'><div class='kpi-bar-fill' style='width:{avg_stress*100:.0f}%; background:#e07d30'></div></div>
     </div>""", unsafe_allow_html=True)
 
 with k3:
@@ -333,9 +208,7 @@ with k3:
         <div class='kpi-label'>Avg Functionality</div>
         <div class='kpi-value good'>{avg_functionality:.0f}%</div>
         <div class='kpi-sublabel'>Water points operational</div>
-        <div class='kpi-bar'>
-            <div class='kpi-bar-fill' style='width:{avg_functionality:.0f}%; background:#22c77a'></div>
-        </div>
+        <div class='kpi-bar'><div class='kpi-bar-fill' style='width:{avg_functionality:.0f}%; background:#22c77a'></div></div>
     </div>""", unsafe_allow_html=True)
 
 with k4:
@@ -344,9 +217,7 @@ with k4:
         <div class='kpi-label'>Population Served</div>
         <div class='kpi-value info'>{total_pop:,.0f}</div>
         <div class='kpi-sublabel'>Across all water points</div>
-        <div class='kpi-bar'>
-            <div class='kpi-bar-fill' style='width:65%; background:#0ea5c9'></div>
-        </div>
+        <div class='kpi-bar'><div class='kpi-bar-fill' style='width:65%; background:#0ea5c9'></div></div>
     </div>""", unsafe_allow_html=True)
 
 with k5:
@@ -355,9 +226,7 @@ with k5:
         <div class='kpi-label'>High Confidence LGAs</div>
         <div class='kpi-value good'>{high_conf}/17</div>
         <div class='kpi-sublabel'>Reliable predictions</div>
-        <div class='kpi-bar'>
-            <div class='kpi-bar-fill' style='width:{high_conf/17*100:.0f}%; background:#22c77a'></div>
-        </div>
+        <div class='kpi-bar'><div class='kpi-bar-fill' style='width:{high_conf/17*100:.0f}%; background:#22c77a'></div></div>
     </div>""", unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
@@ -404,10 +273,8 @@ with map_col:
         enugu_map.__geo_interface__,
         style_function=lambda x: {'fillOpacity': 0, 'weight': 0},
         tooltip=folium.GeoJsonTooltip(
-            fields=['NAME_2','predicted_stress','confidence',
-                    'functionality_rate','total_pop_served'],
-            aliases=['LGA','Stress Score','Confidence',
-                     'Functionality %','Population Served'],
+            fields=['NAME_2','predicted_stress','confidence','functionality_rate','total_pop_served'],
+            aliases=['LGA','Stress Score','Confidence','Functionality %','Population Served'],
             localize=True,
             style="""
                 background-color: #050d18;
@@ -430,7 +297,7 @@ with map_col:
                 radius=8, color='#e05252',
                 fill=True, fill_color='#e05252', fill_opacity=0.85,
                 popup=folium.Popup(
-                    f"<b style='color:#e05252'>{row['lga_name']}</b><br>"
+                    f"<b>{row['lga_name']}</b><br>"
                     f"Stress: {row['predicted_stress']:.3f}<br>"
                     f"Confidence: {row['confidence']}",
                     max_width=200
@@ -440,10 +307,8 @@ with map_col:
     st_folium(m, width=700, height=500)
 
 with rank_col:
-    rank_df = df.sort_values('predicted_stress', ascending=True)
-    bar_colors = rank_df['confidence'].map({
-        'High': '#22c77a', 'Medium': '#e07d30', 'Low': '#e05252'
-    })
+    rank_df    = df.sort_values('predicted_stress', ascending=True)
+    bar_colors = rank_df['confidence'].map({'High':'#22c77a','Medium':'#e07d30','Low':'#e05252'})
 
     fig_rank = go.Figure()
     fig_rank.add_trace(go.Bar(
@@ -524,11 +389,7 @@ with scatter_col:
         size='total_pop_served', color='confidence',
         color_discrete_map={'High':'#22c77a','Medium':'#e07d30','Low':'#e05252'},
         hover_name='lga_name',
-        hover_data={
-            'predicted_stress':':.3f',
-            'heat_veg_stress':':.1f',
-            'total_pop_served':':,.0f'
-        },
+        hover_data={'predicted_stress':':.3f','heat_veg_stress':':.1f','total_pop_served':':,.0f'},
         labels={
             'heat_veg_stress':'Heat-Vegetation Stress Index (LST/NDVI)',
             'predicted_stress':'Predicted Water Stress Score',
@@ -542,12 +403,7 @@ with scatter_col:
         margin=dict(l=10, r=10, t=40, b=10),
         xaxis=dict(gridcolor='#0e2a45'),
         yaxis=dict(gridcolor='#0e2a45'),
-        legend=dict(
-            bgcolor='#0d1b2a',
-            bordercolor='#0e2a45',
-            borderwidth=1,
-            font=dict(color='#e2f4fb')
-        )
+        legend=dict(bgcolor='#0d1b2a', bordercolor='#0e2a45', borderwidth=1, font=dict(color='#e2f4fb'))
     )
     st.plotly_chart(fig_scatter, use_container_width=True)
 
@@ -588,7 +444,7 @@ def highlight_confidence(val):
     return mapping.get(val, '')
 
 styled_table = table_df.style\
-    .map(highlight_stress,    subset=['Stress Score'])\
+    .map(highlight_stress,     subset=['Stress Score'])\
     .map(highlight_confidence, subset=['Confidence'])\
     .format({
         'Stress Score':    '{:.3f}',
