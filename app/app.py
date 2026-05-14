@@ -69,18 +69,18 @@ st.markdown("""
 # DATA LOADING — functions defined then called immediately
 # ============================================================
 @st.cache_data
-def load_data():
-    return pd.read_csv('dashboard_data.csv')
-
-@st.cache_data
 def load_geodata():
-    with open('../data/enugu_data.pkl', 'rb') as f:
-        data = pickle.load(f)
-    return data['enugu']
-
-@st.cache_data
-def load_importance():
-    return pd.read_csv('feature_importance.csv')
+    possible_paths = [
+        'data/enugu_data.pkl',
+        '../data/enugu_data.pkl',
+        '/mount/src/aqua-spatial/app/data/enugu_data.pkl'
+    ]
+    for path in possible_paths:
+        if os.path.exists(path):
+            with open(path, 'rb') as f:
+                data = pickle.load(f)
+            return data['enugu']
+    raise FileNotFoundError("enugu_data.pkl not found")
 
 df            = load_data()
 enugu         = load_geodata()
