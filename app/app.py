@@ -69,6 +69,18 @@ st.markdown("""
 # DATA LOADING — functions defined then called immediately
 # ============================================================
 @st.cache_data
+def load_data():
+    possible_paths = [
+        'dashboard_data.csv',
+        'app/dashboard_data.csv',
+        '/mount/src/aqua-spatial/app/dashboard_data.csv'
+    ]
+    for path in possible_paths:
+        if os.path.exists(path):
+            return pd.read_csv(path)
+    raise FileNotFoundError("dashboard_data.csv not found")
+
+@st.cache_data
 def load_geodata():
     possible_paths = [
         'data/enugu_data.pkl',
@@ -82,10 +94,21 @@ def load_geodata():
             return data['enugu']
     raise FileNotFoundError("enugu_data.pkl not found")
 
+@st.cache_data
+def load_importance():
+    possible_paths = [
+        'feature_importance.csv',
+        'app/feature_importance.csv',
+        '/mount/src/aqua-spatial/app/feature_importance.csv'
+    ]
+    for path in possible_paths:
+        if os.path.exists(path):
+            return pd.read_csv(path)
+    raise FileNotFoundError("feature_importance.csv not found")
+
 df            = load_data()
 enugu         = load_geodata()
 importance_df = load_importance()
-
 # ============================================================
 # SIDEBAR
 # ============================================================
