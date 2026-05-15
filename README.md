@@ -11,7 +11,7 @@
 
 ## The Problem
 
-Water infrastructure decisions across Nigerian LGAs are routinely made without data. The result: boreholes drilled in the wrong locations, budgets wasted, and communities still walking kilometres for water. UNICEF estimates that over 60 million Nigerians lack access to basic water services — not because the resources don't exist, but because no one knows exactly where to deploy them.
+Water infrastructure decisions across Nigerian LGAs are routinely made without data. The result: boreholes drilled in the wrong locations, budgets wasted, and communities still walking kilometres for water. UNICEF estimates that over 60 million Nigerians lack access to basic water services - not because the resources don't exist, but because no one knows exactly where to deploy them.
 
 **Aqua-Spatial solves the "where" problem.**
 
@@ -19,7 +19,7 @@ Water infrastructure decisions across Nigerian LGAs are routinely made without d
 
 ## What It Does
 
-Aqua-Spatial is a spatial machine learning platform that tells Enugu State Government and UNICEF exactly which Local Government Areas need water infrastructure investment most urgently — and quantifies how confident we are in each prediction.
+Aqua-Spatial is a spatial machine learning platform that tells Enugu State Government and UNICEF exactly which Local Government Areas need water infrastructure investment most urgently - and quantifies how confident we are in each prediction.
 
 It combines:
 - **Real satellite data** from 4 NASA/USGS sources via Google Earth Engine
@@ -31,7 +31,7 @@ It combines:
 
 ## Key Finding
 
-> *A single satellite-derived feature — Heat-Vegetation Stress Index (LST ÷ NDVI from NASA Landsat 8 and MODIS) — accounts for **33.6% of all predictive power** in our model. More than any infrastructure metric.*
+> *A single satellite-derived feature - Heat-Vegetation Stress Index (LST ÷ NDVI from NASA Landsat 8 and MODIS) - accounts for **33.6% of all predictive power** in our model. More than any infrastructure metric.*
 
 This means satellite data alone can identify water-stressed communities even before any ground surveys are conducted.
 
@@ -86,7 +86,7 @@ MODIS (Land Surface Temp)
 | Gradient Boosting | 0.5720 | 0.0716 |
 | **Ensemble (RF + GB)** | **0.6039** | **0.0687** |
 
-Leave-One-Out Cross Validation was used as the evaluation strategy — the only statistically valid approach for a 17-sample geospatial dataset.
+Leave-One-Out Cross Validation was used as the evaluation strategy - the only statistically valid approach for a 17-sample geospatial dataset.
 
 ---
 
@@ -155,20 +155,20 @@ streamlit run app.py
 
 ## Built With
 
-- **Python** — GeoPandas, Rasterio, Scikit-learn, Pandas, NumPy
-- **Google Earth Engine** — Satellite data extraction
-- **Streamlit + Folium + Plotly** — Interactive dashboard
-- **Scikit-learn** — Random Forest, Gradient Boosting, LOOCV
+- **Python** - GeoPandas, Rasterio, Scikit-learn, Pandas, NumPy
+- **Google Earth Engine** - Satellite data extraction
+- **Streamlit + Folium + Plotly** - Interactive dashboard
+- **Scikit-learn** - Random Forest, Gradient Boosting, LOOCV
 
 ---
 
 ## Author
 
-**Blessing Obasi-Uzoma** — Data Scientist  
+**Blessing Obasi-Uzoma** - Data Scientist  
 GitHub: [@Code-blize](https://github.com/Code-blize)
 
 ---
 
 ## License
 
-MIT License — free to use, adapt, and deploy for water security initiatives.
+MIT License - free to use, adapt, and deploy for water security initiatives.
