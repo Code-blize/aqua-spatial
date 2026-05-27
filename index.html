@@ -318,7 +318,7 @@ document.getElementById("kpi-conf").textContent = highConf+"/17";
 document.getElementById("kpi-conf-bar").style.width = (highConf/17*100).toFixed(0)+"%";
 
 // ─── MAP ─────────────────────────────────────────────────────
-const map = L.map("map").setView([6.5,7.4],8);
+const map = L.map("map").setView([6.5,7.4],9);
 L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{attribution:"© CartoDB",maxZoom:19}).addTo(map);
 
 const centroids = {
