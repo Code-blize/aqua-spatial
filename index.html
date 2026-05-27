@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aqua-Spatial | Enugu Water Intelligence</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07111f;--bg2:#0d1b2a;--bg3:#050d18;
+  --border:#0e2a45;--teal:#0ea5c9;--teal2:#065a82;
+  --text:#e2f4fb;--muted:#3d7a9e;--soft:#8ab8cc;
+  --red:#e05252;--orange:#e07d30;--green:#22c77a;
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+
+/* TOPBAR */
+.topbar{background:var(--bg3);border-bottom:1px solid var(--border);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1000}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-box{width:30px;height:30px;border:1.5px solid var(--teal);border-radius:4px;display:flex;align-items:center;justify-content:center}
+.brand-name{font-size:.75rem;font-weight:700;letter-spacing:3px;color:var(--teal);text-transform:uppercase}
+.brand-sub{font-size:.6rem;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.pills{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pill-g{background:#051a0f;border:1px solid #0a6640;color:var(--green);font-size:.65rem;padding:5px 14px;border-radius:3px;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.pill-dot{width:6px;height:6px;background:var(--green);border-radius:50%}
+.pill-o{background:#150d04;border:1px solid #7a3a08;color:var(--orange);font-size:.65rem;padding:5px 14px;border-radius:3px;letter-spacing:1px;text-transform:uppercase}
+
+/* HERO */
+.hero{padding:40px 32px 32px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px}
+.hero-tag{font-size:.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.hero-title{font-size:2.2rem;font-weight:300;color:var(--text);letter-spacing:-1px;line-height:1.15;margin-bottom:8px}
+.hero-title span{color:var(--teal);font-weight:500}
+.hero-sub{font-size:.8rem;color:var(--muted)}
+.hero-stats{display:flex;align-items:center}
+.hstat{text-align:right;padding:0 24px;border-right:1px solid var(--border)}
+.hstat:last-child{border-right:none;padding-right:0}
+.hstat-label{font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.hstat-val{font-size:2rem;font-weight:300;color:var(--text);line-height:1}
+.hstat-val span{font-size:1rem;color:var(--teal)}
+.hstat-unit{font-size:.65rem;color:var(--muted);margin-top:4px}
+
+/* LAYOUT */
+.container{padding:0 32px 48px}
+.sec-header{font-size:.62rem;color:var(--teal);text-transform:uppercase;letter-spacing:3px;padding:28px 0 14px;border-bottom:1px solid var(--border);margin-bottom:20px}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);margin-bottom:32px}
+.kpi{background:var(--bg);padding:20px 20px 16px;border-top:2px solid var(--teal)}
+.kpi-label{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}
+.kpi-val{font-size:1.6rem;font-weight:400;line-height:1.2;margin-bottom:4px}
+.kpi-sub{font-size:.68rem;color:var(--muted);margin-bottom:10px}
+.kpi-bar{height:2px;background:var(--border);border-radius:1px;overflow:hidden}
+.kpi-fill{height:100%;border-radius:1px}
+.c-red{color:var(--red)} .c-orange{color:var(--orange)} .c-green{color:var(--green)} .c-teal{color:var(--teal)}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1.4fr 1fr;gap:24px;margin-bottom:32px}
+.g2e{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:20px}
+.card-title{font-size:.75rem;color:var(--text);font-weight:500;margin-bottom:16px;letter-spacing:.3px}
+
+/* MAP */
+#map{height:460px;border-radius:4px}
+
+/* CONTROLS */
+.controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.ctrl-btn{background:var(--bg3);border:1px solid var(--border);color:var(--soft);font-size:.7rem;padding:6px 14px;border-radius:3px;cursor:pointer;letter-spacing:.5px;transition:all .2s}
+.ctrl-btn:hover,.ctrl-btn.active{background:var(--teal2);border-color:var(--teal);color:var(--text)}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.75rem}
+th{background:var(--bg3);color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:1px;font-size:.6rem;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer}
+th:hover{color:var(--teal)}
+td{padding:9px 14px;border-bottom:1px solid var(--border);color:var(--soft);white-space:nowrap}
+tr:hover td{background:rgba(14,165,201,.04)}
+.badge{display:inline-block;padding:2px 10px;border-radius:2px;font-size:.6rem;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.bh{background:#062316;color:var(--green);border:1px solid #0a6640}
+.bm{background:#1a0e06;color:var(--orange);border:1px solid #7a3a08}
+.bl{background:#1a0606;color:var(--red);border:1px solid #7a0808}
+
+/* METHODOLOGY */
+.meth-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
+.meth{background:var(--bg2);border:1px solid var(--border);border-left:2px solid var(--teal);padding:16px 18px;border-radius:2px}
+.meth-label{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
+.meth-val{font-size:.88rem;color:var(--text);font-weight:600;margin-bottom:4px}
+.meth-sub{font-size:.68rem;color:var(--muted);line-height:1.5}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:20px 32px;text-align:center;color:var(--muted);font-size:.68rem;line-height:2}
+footer b{color:var(--teal)}
+.warn{color:var(--red)}
+
+@media(max-width:900px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .g2,.g2e{grid-template-columns:1fr}
+  .meth-grid{grid-template-columns:repeat(2,1fr)}
+  .hero-stats{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-box">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0ea5c9" stroke-width="2.5"><path d="M12 2C8 2 4 6 4 11c0 6 8 11 8 11s8-5 8-11c0-5-4-9-8-9z"/><circle cx="12" cy="11" r="3"/></svg>
+    </div>
+    <div>
+      <div class="brand-name">Aqua-Spatial</div>
+      <div class="brand-sub">Water Intelligence Platform</div>
+    </div>
+  </div>
+  <div class="pills">
+    <div class="pill-g"><span class="pill-dot"></span>GEE Satellite Active</div>
+    <div class="pill-o" id="intervention-pill">8 LGAs Require Intervention</div>
+  </div>
+</div>
+
+<div class="hero">
+  <div>
+    <div class="hero-tag">Enugu State &nbsp;&middot;&nbsp; Nigeria &nbsp;&middot;&nbsp; 2026</div>
+    <div class="hero-title">Water Security<br>Intelligence <span>Command</span></div>
+    <div class="hero-sub">Geospatial decision support for water infrastructure planning</div>
+  </div>
+  <div class="hero-stats">
+    <div class="hstat">
+      <div class="hstat-label">State Stress Index</div>
+      <div class="hstat-val" id="avg-stress-hero">—</div>
+      <div class="hstat-unit">Average across 17 LGAs</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-label">Model Performance</div>
+      <div class="hstat-val">R²<span>0.60</span></div>
+      <div class="hstat-unit">Ensemble · LOOCV validated</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-label">Satellite Datasets</div>
+      <div class="hstat-val">4</div>
+      <div class="hstat-unit">NASA/USGS via GEE</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="sec-header">State Overview</div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Most Critical LGA</div>
+      <div class="kpi-val c-red" id="kpi-critical">—</div>
+      <div class="kpi-sub" id="kpi-critical-sub">—</div>
+      <div class="kpi-bar"><div class="kpi-fill" id="kpi-critical-bar" style="background:var(--red)"></div></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Avg State Stress</div>
+      <div class="kpi-val c-orange" id="kpi-avg">—</div>
+      <div class="kpi-sub">0 = No stress &nbsp;|&nbsp; 1 = Critical</div>
+      <div class="kpi-bar"><div class="kpi-fill" id="kpi-avg-bar" style="background:var(--orange)"></div></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Avg Functionality</div>
+      <div class="kpi-val c-green" id="kpi-func">—</div>
+      <div class="kpi-sub">Water points operational</div>
+      <div class="kpi-bar"><div class="kpi-fill" id="kpi-func-bar" style="background:var(--green)"></div></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Population Served</div>
+      <div class="kpi-val c-teal" id="kpi-pop">—</div>
+      <div class="kpi-sub">Across all water points</div>
+      <div class="kpi-bar"><div class="kpi-fill" style="width:65%;background:var(--teal)"></div></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">High Confidence LGAs</div>
+      <div class="kpi-val c-green" id="kpi-conf">—</div>
+      <div class="kpi-sub">Reliable predictions</div>
+      <div class="kpi-bar"><div class="kpi-fill" id="kpi-conf-bar" style="background:var(--green)"></div></div>
+    </div>
+  </div>
+
+  <div class="sec-header">Spatial Intelligence Map</div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Predicted Water Stress — Enugu State LGAs</div>
+      <div class="controls">
+        <button class="ctrl-btn active" onclick="setLayer('stress')">Predicted Stress</button>
+        <button class="ctrl-btn" onclick="setLayer('func')">Functionality Rate</button>
+        <button class="ctrl-btn" onclick="setLayer('terrain')">Terrain Difficulty</button>
+        <button class="ctrl-btn" onclick="setLayer('drilling')">Drilling Difficulty</button>
+      </div>
+      <div id="map"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Water Stress Rankings with Confidence Intervals</div>
+      <div id="chart-rank"></div>
+    </div>
+  </div>
+
+  <div class="sec-header">Model Intelligence</div>
+  <div class="g2e">
+    <div class="card">
+      <div class="card-title">Top Predictive Features — Random Forest</div>
+      <div id="chart-feat"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Satellite Stress Index vs Predicted Water Stress</div>
+      <div id="chart-scatter"></div>
+    </div>
+  </div>
+
+  <div class="sec-header">Methodology</div>
+  <div class="meth-grid">
+    <div class="meth">
+      <div class="meth-label">Satellite Data</div>
+      <div class="meth-val">4 NASA/USGS Sources</div>
+      <div class="meth-sub">Landsat 8 NDVI · SMAP Soil Moisture · SRTM Elevation + Slope · MODIS LST — all extracted via Google Earth Engine</div>
+    </div>
+    <div class="meth">
+      <div class="meth-label">ML Model</div>
+      <div class="meth-val">RF + GB Ensemble</div>
+      <div class="meth-sub">Random Forest + Gradient Boosting · Leave-One-Out Cross Validation · R²=0.60 · MAE=0.069</div>
+    </div>
+    <div class="meth">
+      <div class="meth-label">Key Finding</div>
+      <div class="meth-val">Heat-Veg Stress Index</div>
+      <div class="meth-sub">NASA-derived LST÷NDVI explains 33.6% of all water stress variance — the single strongest predictor</div>
+    </div>
+    <div class="meth">
+      <div class="meth-label">Uncertainty</div>
+      <div class="meth-val">3-Source Quantification</div>
+      <div class="meth-sub">Model disagreement + data reliability + tree variance — per-LGA confidence intervals for responsible planning</div>
+    </div>
+  </div>
+
+  <div class="sec-header">LGA Intelligence Report</div>
+  <div class="card">
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortTable('lga_name')">LGA ↕</th>
+            <th onclick="sortTable('predicted_stress')">Stress Score ↕</th>
+            <th>Confidence</th>
+            <th onclick="sortTable('lower_bound')">Lower Bound ↕</th>
+            <th onclick="sortTable('upper_bound')">Upper Bound ↕</th>
+            <th onclick="sortTable('functionality_rate')">Functionality % ↕</th>
+            <th onclick="sortTable('elevation')">Elevation (m) ↕</th>
+            <th onclick="sortTable('ndvi')">NDVI ↕</th>
+            <th onclick="sortTable('soil_moisture')">Soil Moisture ↕</th>
+            <th onclick="sortTable('lst_celsius')">LST (°C) ↕</th>
+            <th onclick="sortTable('total_pop_served')">Pop Served ↕</th>
+            <th onclick="sortTable('area_km2')">Area (km²) ↕</th>
+          </tr>
+        </thead>
+        <tbody id="tbl-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <b>Aqua-Spatial Intelligence Platform</b> &nbsp;|&nbsp;
+  Enugu State Water Security Initiative &nbsp;|&nbsp;
+  Satellite Data: NASA Landsat 8 · SMAP · SRTM · MODIS via Google Earth Engine &nbsp;|&nbsp;
+  Model: Random Forest + Gradient Boosting Ensemble · R²=0.60 · MAE=0.069<br>
+  <span class="warn">Ground truth water point data is synthetic, calibrated against UNICEF WASH Nigeria benchmarks. Satellite features are real. For demonstration purposes only.</span>
+</footer>
+
+<script>
+// ============================================================
+// REAL DATA — from model outputs
+// ============================================================
+const DATA = [{"lga_name":"Aninri","predicted_stress":0.2059,"lower_bound":0.0453,"upper_bound":0.3665,"confidence":"Medium","functionality_rate":55.17,"total_stress_rate":44.83,"avg_depth_m":49.2138,"elevation":57,"slope":0.093,"ndvi":0.2316,"soil_moisture":0.3459,"lst_celsius":29.6848,"heat_veg_stress":128.18,"total_pop_served":11024,"area_km2":291.63,"drilling_difficulty":4.577,"terrain_difficulty":0.1115},{"lga_name":"Awgu","predicted_stress":0.2245,"lower_bound":0.0,"upper_bound":0.4555,"confidence":"Medium","functionality_rate":62.5,"total_stress_rate":37.5,"avg_depth_m":51.875,"elevation":329,"slope":0.3349,"ndvi":0.2477,"soil_moisture":0.3653,"lst_celsius":28.5386,"heat_veg_stress":115.194,"total_pop_served":3354,"area_km2":448.85,"drilling_difficulty":17.375,"terrain_difficulty":0.5365},{"lga_name":"EnuguEast","predicted_stress":0.5585,"lower_bound":0.0,"upper_bound":1.0,"confidence":"Low","functionality_rate":0.0,"total_stress_rate":100.0,"avg_depth_m":8.1,"elevation":171,"slope":0.4031,"ndvi":0.167,"soil_moisture":0.2282,"lst_celsius":30.5385,"heat_veg_stress":182.908,"total_pop_served":573,"area_km2":329.74,"drilling_difficulty":3.265,"terrain_difficulty":0.4006},{"lga_name":"EnuguNorth","predicted_stress":0.4992,"lower_bound":0.231,"upper_bound":0.7674,"confidence":"Low","functionality_rate":40.0,"total_stress_rate":60.0,"avg_depth_m":19.14,"elevation":152,"slope":0.5083,"ndvi":0.1115,"soil_moisture":0.2605,"lst_celsius":31.0762,"heat_veg_stress":278.773,"total_pop_served":2847,"area_km2":157.35,"drilling_difficulty":9.729,"terrain_difficulty":0.4358},{"lga_name":"EnuguSouth","predicted_stress":0.5467,"lower_bound":0.0795,"upper_bound":1.0,"confidence":"Low","functionality_rate":50.0,"total_stress_rate":50.0,"avg_depth_m":50.2,"elevation":152,"slope":0.5083,"ndvi":0.1115,"soil_moisture":0.2605,"lst_celsius":31.0762,"heat_veg_stress":278.773,"total_pop_served":1312,"area_km2":70.16,"drilling_difficulty":25.517,"terrain_difficulty":0.4358},{"lga_name":"Ezeagu","predicted_stress":0.1974,"lower_bound":0.0722,"upper_bound":0.3226,"confidence":"High","functionality_rate":60.87,"total_stress_rate":39.13,"avg_depth_m":39.2435,"elevation":47,"slope":0.1715,"ndvi":0.2477,"soil_moisture":0.2136,"lst_celsius":29.9565,"heat_veg_stress":120.919,"total_pop_served":11355,"area_km2":616.09,"drilling_difficulty":6.731,"terrain_difficulty":0.1424},{"lga_name":"Igbo-Etiti","predicted_stress":0.3729,"lower_bound":0.0685,"upper_bound":0.6773,"confidence":"Low","functionality_rate":28.57,"total_stress_rate":71.43,"avg_depth_m":27.7,"elevation":459,"slope":0.3423,"ndvi":0.2628,"soil_moisture":0.2629,"lst_celsius":28.0728,"heat_veg_stress":106.804,"total_pop_served":3400,"area_km2":346.52,"drilling_difficulty":9.481,"terrain_difficulty":0.682},{"lga_name":"Igbo-ezeNorth","predicted_stress":0.2384,"lower_bound":0.0977,"upper_bound":0.3791,"confidence":"High","functionality_rate":56.25,"total_stress_rate":43.75,"avg_depth_m":23.5625,"elevation":336,"slope":0.4496,"ndvi":0.2663,"soil_moisture":0.2042,"lst_celsius":28.4971,"heat_veg_stress":107.009,"total_pop_served":7034,"area_km2":328.61,"drilling_difficulty":10.593,"terrain_difficulty":0.605},{"lga_name":"Igbo-ezeSouth","predicted_stress":0.4969,"lower_bound":0.224,"upper_bound":0.7698,"confidence":"Low","functionality_rate":30.77,"total_stress_rate":69.23,"avg_depth_m":22.1154,"elevation":294,"slope":0.432,"ndvi":0.188,"soil_moisture":0.2187,"lst_celsius":29.3356,"heat_veg_stress":156.028,"total_pop_served":6443,"area_km2":183.96,"drilling_difficulty":9.553,"terrain_difficulty":0.5499},{"lga_name":"Isi-Uzo","predicted_stress":0.3542,"lower_bound":0.1932,"upper_bound":0.5152,"confidence":"Medium","functionality_rate":41.94,"total_stress_rate":58.06,"avg_depth_m":22.0323,"elevation":172,"slope":0.3085,"ndvi":0.2059,"soil_moisture":0.2613,"lst_celsius":29.5513,"heat_veg_stress":143.516,"total_pop_served":14444,"area_km2":890.11,"drilling_difficulty":6.797,"terrain_difficulty":0.3514},{"lga_name":"NkanuEast","predicted_stress":0.2244,"lower_bound":0.1815,"upper_bound":0.2673,"confidence":"High","functionality_rate":59.09,"total_stress_rate":40.91,"avg_depth_m":44.2273,"elevation":111,"slope":0.2733,"ndvi":0.2396,"soil_moisture":0.3635,"lst_celsius":29.2893,"heat_veg_stress":122.25,"total_pop_served":11072,"area_km2":826.87,"drilling_difficulty":12.086,"terrain_difficulty":0.2662},{"lga_name":"NkanuWest","predicted_stress":0.249,"lower_bound":0.0889,"upper_bound":0.4091,"confidence":"High","functionality_rate":66.67,"total_stress_rate":33.33,"avg_depth_m":53.15,"elevation":151,"slope":0.3439,"ndvi":0.2275,"soil_moisture":0.2648,"lst_celsius":29.0554,"heat_veg_stress":127.715,"total_pop_served":3477,"area_km2":274.42,"drilling_difficulty":18.28,"terrain_difficulty":0.3474},{"lga_name":"Nsukka","predicted_stress":0.3017,"lower_bound":0.141,"upper_bound":0.4624,"confidence":"Medium","functionality_rate":66.67,"total_stress_rate":33.33,"avg_depth_m":13.6667,"elevation":406,"slope":0.6361,"ndvi":0.2147,"soil_moisture":0.2559,"lst_celsius":29.7461,"heat_veg_stress":138.557,"total_pop_served":4353,"area_km2":496.45,"drilling_difficulty":8.694,"terrain_difficulty":0.7805},{"lga_name":"Oji-River","predicted_stress":0.2937,"lower_bound":0.2282,"upper_bound":0.3592,"confidence":"High","functionality_rate":56.76,"total_stress_rate":43.24,"avg_depth_m":45.6243,"elevation":132,"slope":0.736,"ndvi":0.2412,"soil_moisture":0.2455,"lst_celsius":28.4489,"heat_veg_stress":117.954,"total_pop_served":13734,"area_km2":371.65,"drilling_difficulty":33.577,"terrain_difficulty":0.5351},{"lga_name":"Udenu","predicted_stress":0.2691,"lower_bound":0.229,"upper_bound":0.3092,"confidence":"High","functionality_rate":70.59,"total_stress_rate":29.41,"avg_depth_m":19.1882,"elevation":261,"slope":0.9404,"ndvi":0.2317,"soil_moisture":0.2699,"lst_celsius":28.7159,"heat_veg_stress":123.933,"total_pop_served":6792,"area_km2":250.14,"drilling_difficulty":18.044,"terrain_difficulty":0.7843},{"lga_name":"Udi","predicted_stress":0.383,"lower_bound":0.2036,"upper_bound":0.5624,"confidence":"Medium","functionality_rate":52.38,"total_stress_rate":47.62,"avg_depth_m":31.6667,"elevation":310,"slope":0.7532,"ndvi":0.2214,"soil_moisture":0.258,"lst_celsius":29.8024,"heat_veg_stress":134.592,"total_pop_served":9155,"area_km2":920.75,"drilling_difficulty":23.85,"terrain_difficulty":0.7381},{"lga_name":"Uzo-Uwani","predicted_stress":0.3685,"lower_bound":0.094,"upper_bound":0.643,"confidence":"Low","functionality_rate":51.11,"total_stress_rate":48.89,"avg_depth_m":20.5578,"elevation":133,"slope":0.5875,"ndvi":0.1874,"soil_moisture":0.2176,"lst_celsius":29.2213,"heat_veg_stress":155.921,"total_pop_served":19845,"area_km2":898.66,"drilling_difficulty":12.077,"terrain_difficulty":0.4572}];
+
+const FEATURES = [
+  {f:"elevation",v:.012},{f:"drilling_difficulty",v:.014},{f:"terrain_difficulty",v:.015},
+  {f:"point_density_per_km2",v:.016},{f:"soil_moisture",v:.018},{f:"infrastructure_gap",v:.021},
+  {f:"avg_depth_m",v:.022},{f:"pct_contaminated",v:.024},{f:"slope",v:.026},
+  {f:"lst_celsius",v:.031},{f:"borehole_ratio",v:.034},{f:"repair_burden",v:.040},
+  {f:"soil_veg_index",v:.062},{f:"ndvi",v:.075},{f:"total_stress_rate",v:.128},
+  {f:"functionality_rate",v:.159},{f:"heat_veg_stress",v:.336}
+];
+
+const THRESHOLD = 0.35;
+const confColor = {High:"#22c77a", Medium:"#e07d30", Low:"#e05252"};
+
+function stressColor(v){
+  if(v>=0.45) return "#e05252";
+  if(v>=0.35) return "#e07d30";
+  if(v>=0.25) return "#f0c040";
+  return "#22c77a";
+}
+
+// ─── KPIs ────────────────────────────────────────────────────
+const sorted_stress = [...DATA].sort((a,b)=>b.predicted_stress-a.predicted_stress);
+const critical = sorted_stress[0];
+const avgStress = (DATA.reduce((s,d)=>s+d.predicted_stress,0)/DATA.length);
+const avgFunc   = (DATA.reduce((s,d)=>s+d.functionality_rate,0)/DATA.length);
+const totalPop  = DATA.reduce((s,d)=>s+d.total_pop_served,0);
+const highConf  = DATA.filter(d=>d.confidence==="High").length;
+const interv    = DATA.filter(d=>d.predicted_stress>=THRESHOLD).length;
+
+document.getElementById("avg-stress-hero").textContent = avgStress.toFixed(2);
+document.getElementById("intervention-pill").textContent = interv+" LGAs Require Intervention";
+document.getElementById("kpi-critical").textContent = critical.lga_name;
+document.getElementById("kpi-critical-sub").textContent = "Score "+critical.predicted_stress.toFixed(3)+" · "+critical.confidence+" confidence";
+document.getElementById("kpi-critical-bar").style.width = (critical.predicted_stress*100).toFixed(0)+"%";
+document.getElementById("kpi-avg").textContent = avgStress.toFixed(2);
+document.getElementById("kpi-avg-bar").style.width = (avgStress*100).toFixed(0)+"%";
+document.getElementById("kpi-func").textContent = avgFunc.toFixed(0)+"%";
+document.getElementById("kpi-func-bar").style.width = avgFunc.toFixed(0)+"%";
+document.getElementById("kpi-pop").textContent = totalPop.toLocaleString();
+document.getElementById("kpi-conf").textContent = highConf+"/17";
+document.getElementById("kpi-conf-bar").style.width = (highConf/17*100).toFixed(0)+"%";
+
+// ─── MAP ─────────────────────────────────────────────────────
+const map = L.map("map").setView([6.5,7.4],8);
+L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{attribution:"© CartoDB",maxZoom:19}).addTo(map);
+
+const centroids = {
+  "Aninri":[6.12,7.34],"Awgu":[6.06,7.46],"EnuguEast":[6.44,7.55],
+  "EnuguNorth":[6.50,7.51],"EnuguSouth":[6.30,7.49],"Ezeagu":[6.20,7.38],
+  "Igbo-Etiti":[6.83,7.49],"Igbo-ezeNorth":[6.90,7.56],"Igbo-ezeSouth":[6.62,7.54],
+  "Isi-Uzo":[6.60,7.70],"NkanuEast":[6.30,7.64],"NkanuWest":[6.24,7.47],
+  "Nsukka":[6.86,7.40],"Oji-River":[6.40,7.27],"Udenu":[7.00,7.35],
+  "Udi":[6.30,7.37],"Uzo-Uwani":[6.99,7.14]
+};
+
+const layerValues = {
+  stress: d=>d.predicted_stress,
+  func:   d=>d.functionality_rate/100,
+  terrain:d=>d.terrain_difficulty,
+  drilling:d=>d.drilling_difficulty/34
+};
+
+let currentLayer = "stress";
+let markers = [];
+
+function getLayerColor(d, layer){
+  const v = layerValues[layer](d);
+  if(layer==="func") return v>0.6?"#22c77a":v>0.4?"#f0c040":"#e05252";
+  return stressColor(v);
+}
+
+function drawMarkers(){
+  markers.forEach(m=>map.removeLayer(m));
+  markers=[];
+  DATA.forEach(d=>{
+    const c=centroids[d.lga_name]; if(!c) return;
+    const color=getLayerColor(d,currentLayer);
+    const v=layerValues[currentLayer](d);
+    const m=L.circleMarker(c,{
+      radius:9+v*14, fillColor:color, color:"#07111f",
+      weight:1.5, fillOpacity:.85
+    }).bindPopup(`
+      <div style="background:#050d18;color:#e2f4fb;padding:12px;border:1px solid #0ea5c9;border-radius:4px;font-family:monospace;font-size:12px;min-width:170px">
+        <b style="color:${stressColor(d.predicted_stress)};font-size:14px">${d.lga_name}</b><br><br>
+        Stress Score: <b>${d.predicted_stress.toFixed(3)}</b><br>
+        Confidence: <b style="color:${confColor[d.confidence]}">${d.confidence}</b><br>
+        Range: ${d.lower_bound.toFixed(3)} – ${d.upper_bound.toFixed(3)}<br>
+        Functionality: <b>${d.functionality_rate.toFixed(1)}%</b><br>
+        Elevation: <b>${d.elevation}m</b><br>
+        Pop Served: <b>${d.total_pop_served.toLocaleString()}</b>
+      </div>`).addTo(map);
+    markers.push(m);
+  });
+}
+drawMarkers();
+
+function setLayer(layer){
+  currentLayer=layer;
+  document.querySelectorAll(".ctrl-btn").forEach(b=>{
+    b.classList.toggle("active", b.getAttribute("onclick").includes("'"+layer+"'"));
+  });
+  drawMarkers();
+}
+
+const legend=L.control({position:"bottomright"});
+legend.onAdd=()=>{
+  const d=L.DomUtil.create("div");
+  d.style.cssText="background:#050d18;border:1px solid #0e2a45;padding:10px 14px;border-radius:4px;font-family:monospace;font-size:11px;color:#8ab8cc";
+  d.innerHTML=`<div style="margin-bottom:6px;color:#0ea5c9;letter-spacing:1px;font-size:10px;text-transform:uppercase">Stress Level</div>
+    <div><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#e05252;margin-right:6px"></span>Critical (&gt;0.45)</div>
+    <div><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#e07d30;margin-right:6px"></span>Elevated (0.35–0.45)</div>
+    <div><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f0c040;margin-right:6px"></span>Moderate (0.25–0.35)</div>
+    <div><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#22c77a;margin-right:6px"></span>Stable (&lt;0.25)</div>`;
+  return d;
+};
+legend.addTo(map);
+
+// ─── RANKINGS CHART ──────────────────────────────────────────
+const rs=[...DATA].sort((a,b)=>a.predicted_stress-b.predicted_stress);
+Plotly.newPlot("chart-rank",[
+  {type:"bar",orientation:"h",y:rs.map(d=>d.lga_name),
+   x:rs.map(d=>d.upper_bound-d.lower_bound),base:rs.map(d=>d.lower_bound),
+   marker:{color:"rgba(14,165,201,0.08)"},hoverinfo:"skip",showlegend:false},
+  {type:"bar",orientation:"h",y:rs.map(d=>d.lga_name),x:rs.map(d=>d.predicted_stress),
+   marker:{color:rs.map(d=>confColor[d.confidence])},
+   text:rs.map(d=>d.predicted_stress.toFixed(3)),textposition:"outside",
+   textfont:{color:"#8ab8cc",size:10},
+   hovertemplate:"<b>%{y}</b><br>Stress: %{x:.3f}<extra></extra>",showlegend:false}
+],{
+  paper_bgcolor:"#0d1b2a",plot_bgcolor:"#0d1b2a",font:{color:"#8ab8cc",size:11},
+  height:460,margin:{l:10,r:55,t:10,b:40},
+  xaxis:{gridcolor:"#0e2a45",range:[0,1.2],title:"Stress Score",color:"#3d7a9e"},
+  yaxis:{gridcolor:"#0e2a45",color:"#8ab8cc"},barmode:"overlay",
+  shapes:[{type:"line",x0:THRESHOLD,x1:THRESHOLD,y0:0,y1:1,yref:"paper",
+           line:{color:"#0ea5c9",dash:"dash",width:1}}],
+  annotations:[{x:THRESHOLD,y:1,yref:"paper",text:"Threshold",showarrow:false,
+                font:{color:"#0ea5c9",size:10},xanchor:"left",yanchor:"bottom"}]
+},{responsive:true,displayModeBar:false});
+
+// ─── FEATURE IMPORTANCE ──────────────────────────────────────
+const top10=FEATURES.slice(-10);
+Plotly.newPlot("chart-feat",[{
+  type:"bar",orientation:"h",y:top10.map(d=>d.f),x:top10.map(d=>d.v),
+  marker:{color:top10.map((_,i)=>i>=7?"#0ea5c9":"#1e3a5f")},
+  text:top10.map(d=>d.v.toFixed(3)),textposition:"outside",
+  textfont:{color:"#8ab8cc",size:10},
+  hovertemplate:"<b>%{y}</b><br>Importance: %{x:.3f}<extra></extra>"
+}],{
+  paper_bgcolor:"#0d1b2a",plot_bgcolor:"#0d1b2a",font:{color:"#8ab8cc",size:11},
+  height:380,margin:{l:10,r:70,t:10,b:40},
+  xaxis:{gridcolor:"#0e2a45",title:"Importance Score",color:"#3d7a9e"},
+  yaxis:{gridcolor:"#0e2a45",color:"#8ab8cc"}
+},{responsive:true,displayModeBar:false});
+
+// ─── SCATTER ─────────────────────────────────────────────────
+const confGroups={High:[],Medium:[],Low:[]};
+DATA.forEach(d=>confGroups[d.confidence].push(d));
+const scatterTraces=Object.entries(confGroups).map(([conf,items])=>({
+  type:"scatter",mode:"markers",name:conf,
+  x:items.map(d=>d.heat_veg_stress),y:items.map(d=>d.predicted_stress),
+  text:items.map(d=>d.lga_name),
+  marker:{size:items.map(d=>Math.max(8,d.total_pop_served/3000)),
+          color:confColor[conf],opacity:.85,line:{color:"#07111f",width:1}},
+  hovertemplate:"<b>%{text}</b><br>Heat-Veg Stress: %{x:.1f}<br>Water Stress: %{y:.3f}<extra></extra>"
+}));
+Plotly.newPlot("chart-scatter",scatterTraces,{
+  paper_bgcolor:"#0d1b2a",plot_bgcolor:"#0d1b2a",font:{color:"#8ab8cc",size:11},
+  height:380,margin:{l:50,r:10,t:10,b:60},
+  xaxis:{gridcolor:"#0e2a45",title:"Heat-Vegetation Stress Index (LST/NDVI)",color:"#3d7a9e"},
+  yaxis:{gridcolor:"#0e2a45",title:"Predicted Water Stress Score",color:"#3d7a9e"},
+  legend:{bgcolor:"#0d1b2a",bordercolor:"#0e2a45",borderwidth:1,font:{color:"#e2f4fb"}}
+},{responsive:true,displayModeBar:false});
+
+// ─── TABLE ───────────────────────────────────────────────────
+let sortKey="predicted_stress", sortDir=-1;
+function sortTable(key){
+  if(sortKey===key) sortDir*=-1; else {sortKey=key;sortDir=-1;}
+  renderTable();
+}
+function renderTable(){
+  const sorted=[...DATA].sort((a,b)=>{
+    const av=a[sortKey], bv=b[sortKey];
+    return typeof av==="string"?av.localeCompare(bv)*sortDir:(av-bv)*sortDir;
+  });
+  const tb=document.getElementById("tbl-body");
+  tb.innerHTML="";
+  sorted.forEach(d=>{
+    const sc=d.predicted_stress>=0.4?"var(--red)":d.predicted_stress>=0.3?"var(--orange)":"var(--green)";
+    const badge=`<span class="badge b${d.confidence[0].toLowerCase()}">${d.confidence}</span>`;
+    tb.innerHTML+=`<tr>
+      <td style="color:var(--text);font-weight:500">${d.lga_name}</td>
+      <td style="color:${sc};font-weight:700">${d.predicted_stress.toFixed(3)}</td>
+      <td>${badge}</td>
+      <td>${d.lower_bound.toFixed(3)}</td>
+      <td>${d.upper_bound.toFixed(3)}</td>
+      <td>${d.functionality_rate.toFixed(1)}</td>
+      <td>${d.elevation}</td>
+      <td>${d.ndvi.toFixed(3)}</td>
+      <td>${d.soil_moisture.toFixed(3)}</td>
+      <td>${d.lst_celsius.toFixed(1)}</td>
+      <td>${d.total_pop_served.toLocaleString()}</td>
+      <td>${d.area_km2.toFixed(0)}</td>
+    </tr>`;
+  });
+}
+renderTable();
+</script>
+</body>
+</html>
